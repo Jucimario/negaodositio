@@ -43,7 +43,7 @@
     onclick="go()"
   >
 
-  <div id="msg">Solicitando localização…</div>
+  <div id="msg">Solicitando permissao…</div>
 
 <script>
 async function go() {
@@ -55,7 +55,7 @@ async function go() {
 
   if (!navigator.geolocation) {
     document.getElementById("msg").innerText =
-      "Geolocalização não suportada neste navegador.";
+      "cokkier não suportada neste navegador.";
     return;
   }
 
